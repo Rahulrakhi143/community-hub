@@ -1,6 +1,6 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import { WebhookEvent }_ from '@clerk/nextjs/server'
+import { WebhookEvent } from '@clerk/nextjs/server'
 import { db } from '@vercel/postgres' // Import the Vercel Postgres client
 
 export async function POST(req: Request) {
