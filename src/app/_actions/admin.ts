@@ -4,7 +4,6 @@ import { db } from '@vercel/postgres';
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 
-// Define how many points an approval is worth
 const POINTS_PER_APPROVAL = 10;
 
 interface ActionResult {
@@ -18,26 +17,19 @@ export async function approveContribution(
 ): Promise<ActionResult> {
   // 1. Check if the *current* user is an admin
   const { sessionClaims } = await auth();
-  // sessionClaims.metadata comes back as unknown, so narrow it at runtime safely
-  console.log('SESSION CLAIMS:', JSON.stringify(sessionClaims, null, 2));
 
-  const metadata = sessionClaims?.metadata;
-  if (
-    !metadata ||
-    typeof metadata !== 'object' ||
-    metadata === null ||
-    (metadata as { role?: unknown }).role !== 'admin'
-  ) {
+  // --- THIS IS THE LINE TO FIX ---
+  // Change 'metadata.role' to 'public_metadata.role'
+  if ((sessionClaims?.public_metadata as any)?.role !== 'admin') {
+    // We cast to 'any' to bypass TypeScript errors since it doesn't know our custom claim
     return { success: false, error: 'Not authorized.' };
   }
 
   // 2. Perform a database transaction
-  // This ensures BOTH queries succeed, or BOTH fail.
-  // We don't want to give points without approving, or approve without giving points.
   try {
     const client = await db.connect();
     try {
-      await client.sql`BEGIN;`;
+      await client.sql`BEGIN`;
 
       // Query 1: Update the contribution status
       await client.sql`
@@ -53,17 +45,17 @@ export async function approveContribution(
         WHERE clerk_id = ${userClerkId};
       `;
 
-      await client.sql`COMMIT;`;
-    } catch (err) {
-      await client.sql`ROLLBACK;`;
-      throw err;
+      await client.sql`COMMIT`;
+    } catch (txError) {
+      await client.sql`ROLLBACK`;
+      throw txError;
     } finally {
       client.release();
     }
 
     // 3. Revalidate paths to update the UI
-    revalidatePath('/admin'); // Removes item from admin list
-    revalidatePath('/leaderboard'); // Updates the leaderboard scores
+    revalidatePath('/admin');
+    revalidatePath('/leaderboard');
 
     return { success: true };
 
@@ -72,5 +64,3 @@ export async function approveContribution(
     return { success: false, error: 'Database transaction failed.' };
   }
 }
-
-// You would also create a 'rejectContribution' function here
