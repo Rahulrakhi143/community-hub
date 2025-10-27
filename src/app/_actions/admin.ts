@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@vercel/postgres';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs';
 import { revalidatePath } from 'next/cache';
 
 const POINTS_PER_APPROVAL = 10;
@@ -16,7 +16,7 @@ export async function approveContribution(
   userClerkId: string
 ): Promise<ActionResult> {
   // 1. Check if the *current* user is an admin
-  const { sessionClaims } = await auth();
+  const { sessionClaims } = auth();
 
   // --- THIS IS THE LINE TO FIX ---
   // Change 'metadata.role' to 'public_metadata.role'
@@ -27,31 +27,21 @@ export async function approveContribution(
 
   // 2. Perform a database transaction
   try {
-    const client = await db.connect();
-    try {
-      await client.sql`BEGIN`;
-
+    await db.tx(async (tx) => {
       // Query 1: Update the contribution status
-      await client.sql`
+      await tx.sql`
         UPDATE Contributions
         SET status = 'APPROVED'
         WHERE id = ${contributionId};
       `;
 
       // Query 2: Update the user's score
-      await client.sql`
+      await tx.sql`
         UPDATE Users
         SET contribution_score = contribution_score + ${POINTS_PER_APPROVAL}
         WHERE clerk_id = ${userClerkId};
       `;
-
-      await client.sql`COMMIT`;
-    } catch (txError) {
-      await client.sql`ROLLBACK`;
-      throw txError;
-    } finally {
-      client.release();
-    }
+    });
 
     // 3. Revalidate paths to update the UI
     revalidatePath('/admin');
