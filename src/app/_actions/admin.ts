@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@vercel/postgres';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server'; // This import is correct
 import { revalidatePath } from 'next/cache';
 
 const POINTS_PER_APPROVAL = 10;
@@ -16,16 +16,15 @@ export async function approveContribution(
   userClerkId: string
 ): Promise<ActionResult> {
   // 1. Check if the *current* user is an admin
-  const { sessionClaims } = auth();
+  //    --- THIS IS THE FIX ---
+  const { sessionClaims } = await auth(); // We must await the auth() function
 
-  // --- THIS IS THE LINE TO FIX ---
-  // Change 'metadata.role' to 'public_metadata.role'
+  // 2. Check the public_metadata claim for the role
   if ((sessionClaims?.public_metadata as any)?.role !== 'admin') {
-    // We cast to 'any' to bypass TypeScript errors since it doesn't know our custom claim
     return { success: false, error: 'Not authorized.' };
   }
 
-  // 2. Perform a database transaction
+  // 3. Perform a database transaction
   try {
     await db.tx(async (tx) => {
       // Query 1: Update the contribution status
@@ -43,7 +42,7 @@ export async function approveContribution(
       `;
     });
 
-    // 3. Revalidate paths to update the UI
+    // 4. Revalidate paths to update the UI
     revalidatePath('/admin');
     revalidatePath('/leaderboard');
 
