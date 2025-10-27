@@ -19,11 +19,15 @@ export async function approveContribution(
   // 1. Check if the *current* user is an admin
   const { sessionClaims } = await auth();
   // sessionClaims.metadata comes back as unknown, so narrow it at runtime safely
-  const userRole =
-    sessionClaims && typeof sessionClaims.metadata === 'object' && sessionClaims.metadata !== null
-      ? (sessionClaims.metadata as { role?: string }).role
-      : undefined;
-  if (userRole !== 'admin') {
+  console.log('SESSION CLAIMS:', JSON.stringify(sessionClaims, null, 2));
+
+  const metadata = sessionClaims?.metadata;
+  if (
+    !metadata ||
+    typeof metadata !== 'object' ||
+    metadata === null ||
+    (metadata as { role?: unknown }).role !== 'admin'
+  ) {
     return { success: false, error: 'Not authorized.' };
   }
 
