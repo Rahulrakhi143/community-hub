@@ -33,10 +33,11 @@ export function QueryForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* --- I'VE ADDED 'text-gray-900' HERE --- */}
       <textarea
         name="queryContent"
         rows={5}
-        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900"
         placeholder="Type your question, suggestion, or request here..."
         disabled={isPending}
         required
@@ -52,7 +53,7 @@ export function QueryForm() {
         {isPending ? 'Submitting...' : 'Submit Query'}
       </button>
 
-      {/* Show success or error messages */}
+      {/* Show success or error messages (Added dark mode text) */}
       {message && <p className="text-green-600 font-medium">{message}</p>}
       {error && <p className="text-red-600 font-medium">{error}</p>}
     </form>
