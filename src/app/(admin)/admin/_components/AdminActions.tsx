@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 // Import both actions
-import { approveContribution, rejectContribution } from '@/app/_actions/admin';
+import { approveContribution, rejectContribution } from '@/src/app/_actions/admin';
 
 export function AdminActions({
   contributionId,
