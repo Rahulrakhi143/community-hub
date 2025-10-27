@@ -65,3 +65,32 @@ export async function approveContribution(
     client.release();
   }
 }
+
+export async function rejectContribution(
+  contributionId: number
+): Promise<ActionResult> {
+  // 1. Check if the *current* user is an admin
+  const { sessionClaims } = await auth();
+
+  // 2. Check the public_metadata claim for the role
+  if ((sessionClaims?.public_metadata as any)?.role !== 'admin') {
+    return { success: false, error: 'Not authorized.' };
+  }
+
+  // 3. Update the database
+  try {
+    await db.sql`
+      UPDATE Contributions
+      SET status = 'REJECTED'
+      WHERE id = ${contributionId};
+    `;
+
+    // 4. Revalidate admin path to remove item from list
+    revalidatePath('/admin');
+    return { success: true };
+    
+  } catch (error) {
+    console.error('Error rejecting contribution:', error);
+    return { success: false, error: 'Database query failed.' };
+  }
+}
