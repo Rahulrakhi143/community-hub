@@ -34,19 +34,20 @@ export function ContributionForm() {
       onSubmit={handleSubmit} 
       className="flex flex-col gap-4 p-6 bg-white rounded-lg shadow-md border border-gray-200"
     >
-      <h3 className="text-xl font-semibold text-gray-800">Submit a Contribution</h3>
+      <h3 className="text-xl font-semibold text-gray-900">Submit a Contribution</h3>
       
       {/* Platform Selection */}
       <div>
         <label htmlFor="platform" className="block text-sm font-medium text-gray-700 mb-1">
           Platform
         </label>
+        {/* --- I'VE ADDED 'text-gray-900' HERE --- */}
         <select
           name="platform"
           id="platform"
           required
           disabled={isPending}
-          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-900"
         >
           <option value="">Select a platform...</option>
           <option value="Twitter">Twitter</option>
@@ -62,12 +63,13 @@ export function ContributionForm() {
         <label htmlFor="actionType" className="block text-sm font-medium text-gray-700 mb-1">
           Action
         </label>
+        {/* --- I'VE ADDED 'text-gray-900' HERE --- */}
         <select
           name="actionType"
           id="actionType"
           required
           disabled={isPending}
-          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-900"
         >
           <option value="">Select an action...</option>
           <option value="follow">Follow</option>
@@ -82,13 +84,14 @@ export function ContributionForm() {
         <label htmlFor="proof" className="block text-sm font-medium text-gray-700 mb-1">
           Proof (Your username or URL)
         </label>
+        {/* --- I'VE ADDED 'text-gray-900' HERE --- */}
         <input
           type="text"
           name="proof"
           id="proof"
           required
           disabled={isPending}
-          className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm text-gray-900"
           placeholder="e.g., @myusername or https://twitter.com/..."
         />
       </div>
