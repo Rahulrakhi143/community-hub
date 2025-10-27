@@ -18,6 +18,9 @@ export default async function HomePage() {
             My Community Hub
           </h1>
           <div className="flex items-center gap-4">
+            <Link href="/leaderboard" className="font-medium text-blue-600 hover:underline">
+              Leaderboard
+            </Link>
             {userId ? (
               <>
                 <Link href="/dashboard" className="font-medium text-blue-600 hover:underline">

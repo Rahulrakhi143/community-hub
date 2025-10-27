@@ -1,6 +1,15 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export default clerkMiddleware();
+export default clerkMiddleware({
+  // Routes that can be accessed while signed out
+  publicRoutes: [
+    '/', 
+    '/sign-in', 
+    '/sign-up', 
+    '/api/webhooks/clerk',
+    '/leaderboard'  // <-- ADD THIS LINE
+  ],
+} as any);
 
 export const config = {
   matcher: [
