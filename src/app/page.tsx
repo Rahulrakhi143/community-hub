@@ -6,8 +6,8 @@ import { SocialLinks } from './_components/SocialLinks';
 // --- 1. IMPORT THE ICONS ---
 import { FaTrophy, FaThLarge } from 'react-icons/fa';
 
-export default function HomePage() {
-  const { userId } = auth();
+export default async function HomePage() {
+  const { userId } = await auth();
 
   return (
     <div className="bg-gray-50 min-h-screen dark:bg-gray-900">
