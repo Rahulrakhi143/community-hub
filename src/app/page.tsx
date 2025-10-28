@@ -1,18 +1,19 @@
 import { UserButton } from '@clerk/nextjs';
 import { auth } from '@clerk/nextjs/server';
-
 import Link from 'next/link';
 import { QueryForm } from './_components/QueryForm';
 import { SocialLinks } from './_components/SocialLinks';
+// --- 1. IMPORT THE ICONS ---
+import { FaTrophy, FaThLarge } from 'react-icons/fa';
 
-export default async function HomePage() {
-  const { userId } = await auth();
+export default function HomePage() {
+  const { userId } = auth();
 
   return (
     <div className="bg-gray-50 min-h-screen dark:bg-gray-900">
       <main className="container mx-auto p-4 md:p-8 max-w-4xl">
         
-        {/* --- THIS IS THE UPDATED SECTION --- */}
+        {/* Header Section */}
         <header className="
           flex flex-wrap items-center justify-between 
           gap-x-6 gap-y-3 
@@ -24,13 +25,27 @@ export default async function HomePage() {
           
           {/* This div contains all the links */}
           <div className="flex items-center gap-4">
-            <Link href="/leaderboard" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-              Leaderboard
+            
+            {/* --- 2. UPDATED LEADERBOARD LINK --- */}
+            <Link 
+              href="/leaderboard" 
+              className="font-medium text-blue-600 dark:text-blue-400 hover:underline text-xl md:text-base"
+              title="Leaderboard" // Good for accessibility
+            >
+              <FaTrophy className="block md:hidden" /> {/* Icon for mobile */}
+              <span className="hidden md:block">Leaderboard</span> {/* Text for desktop */}
             </Link>
+            
             {userId ? (
               <>
-                <Link href="/dashboard" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                  Dashboard
+                {/* --- 3. UPDATED DASHBOARD LINK --- */}
+                <Link 
+                  href="/dashboard" 
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:underline text-xl md:text-base"
+                  title="Dashboard" // Good for accessibility
+                >
+                  <FaThLarge className="block md:hidden" /> {/* Icon for mobile */}
+                  <span className="hidden md:block">Dashboard</span> {/* Text for desktop */}
                 </Link>
                 <UserButton afterSignOutUrl="/" />
               </>
@@ -49,7 +64,6 @@ export default async function HomePage() {
             )}
           </div>
         </header>
-        {/* --- END OF UPDATED SECTION --- */}
 
 
         {/* Social Links Section */}

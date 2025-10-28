@@ -58,7 +58,7 @@ export default async function LeaderboardPage() {
                 
                 {/* Avatar */}
                 <Image
-                  src={user.image_url || '/default-avatar.png'} // We'll add this default
+                  src={user.image_url ?? '/default-avatar.png'}
                   alt={user.username || 'User'}
                   width={60}
                   height={60}
